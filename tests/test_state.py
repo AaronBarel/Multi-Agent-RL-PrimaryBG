@@ -9,7 +9,9 @@ C = Candidate
 
 
 def test_new_game_state_splits_cubes_between_hand_and_bank():  # rule 4
-    state = new_game_state([C.GEORGIA_BARNES, C.ANTONIO_PARADES, C.RYAN_GUPTA], np.random.default_rng(0))
+    state = new_game_state(
+        [C.GEORGIA_BARNES, C.ANTONIO_PARADES, C.RYAN_GUPTA], np.random.default_rng(0)
+    )
     assert [p.hand for p in state.players] == [1, 5, 1]
     assert all(p.hand + p.bank == TOTAL_CUBES for p in state.players)
     assert state.cubes == [[0, 0, 0] for _ in Region]

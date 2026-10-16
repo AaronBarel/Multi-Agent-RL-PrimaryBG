@@ -88,7 +88,7 @@ def run_episode(e, seed):
     for agent in e.agent_iter():
         obs, reward, termination, truncation, _ = e.last()
         totals[agent] += reward
-        assert 0.0 <= obs["observation"].min() and obs["observation"].max() <= 1.0
+        assert obs["observation"].min() >= 0.0 and obs["observation"].max() <= 1.0
         done = termination or truncation
         e.step(None if done else int(rng.choice(np.flatnonzero(obs["action_mask"]))))
     return totals

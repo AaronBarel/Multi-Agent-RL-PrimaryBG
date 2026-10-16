@@ -33,8 +33,17 @@ def test_logs_cover_the_claude_md_data_collection_list(tmp_path):
     rounds = pq.read_table(tmp_path / "rounds.parquet").schema.names
     events = pq.read_table(tmp_path / "events.parquet").schema.names
     # locations (start, end, in between), hand before/after, cards played, vote outcome
-    for column in ("start_region", "end_region", "path", "hand_start", "hand_end", "cards",
-                   "vote_regions", "vote_placements", "round_result"):
+    for column in (
+        "start_region",
+        "end_region",
+        "path",
+        "hand_start",
+        "hand_end",
+        "cards",
+        "vote_regions",
+        "vote_placements",
+        "round_result",
+    ):
         assert column in rounds
     # where cubes were placed or removed, and by whom
     for column in ("from_region", "to_region", "cube_owner", "amount", "hand_before", "hand_after"):

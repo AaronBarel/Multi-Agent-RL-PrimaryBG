@@ -37,12 +37,15 @@ def obs_size(n: int) -> int:
         + 2 * len(News)  # current News, used News
         + len(Candidate) * n  # candidate per seat
         + n  # starting-player token
-        + MAX_QUEUE * N_CARDS + MAX_QUEUE  # own queue, own executed flags
+        + MAX_QUEUE * N_CARDS
+        + MAX_QUEUE  # own queue, own executed flags
         + (n - 1) * MAX_QUEUE * N_CARDS  # opponents' revealed cards
         + 2 * n  # committed / revealed counts
         + N_CARDS  # own frozen cards
         + n  # skip used
-        + len(DecisionType) + N_CARDS + NUM_REGIONS  # decision type and context
+        + len(DecisionType)
+        + N_CARDS
+        + NUM_REGIONS  # decision type and context
     )
 
 
@@ -83,9 +86,7 @@ def encode_observation(state: GameState, me: int, request: DecisionRequest | Non
         candidates[k, player.candidate] = 1.0
     executed = np.zeros(MAX_QUEUE, dtype=np.float32)
     executed[: len(rnd.revealed[me])] = 1.0
-    counts = [
-        [len(rnd.queue[s]) / MAX_QUEUE, len(rnd.revealed[s]) / MAX_QUEUE] for s in order
-    ]
+    counts = [[len(rnd.queue[s]) / MAX_QUEUE, len(rnd.revealed[s]) / MAX_QUEUE] for s in order]
     frozen = [state.frozen[me].get(card, 0) / CARD_COUNTS[card] for card in Card]
     skipped = [rnd.skipped_slot[s] is not None for s in order]
 

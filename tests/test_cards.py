@@ -221,9 +221,7 @@ def test_negative_ad_on_empty_map_has_no_effect():  # rule 13
 
 def test_spin_doctor_lets_positive_ad_act_as_negative_ad():  # rule 42
     table, _ = make_table(news=News.SPIN_DOCTOR, cubes={(REG.SOUTH, 1): 1})
-    requests, _ = drive(
-        resolve_card(table, 0, Card.POSITIVE_AD), [card_action(Card.NEGATIVE_AD)]
-    )
+    requests, _ = drive(resolve_card(table, 0, Card.POSITIVE_AD), [card_action(Card.NEGATIVE_AD)])
     assert requests[0].decision is DecisionType.SPIN_DOCTOR_TYPE
     assert table.state.cubes[REG.SOUTH][1] == 0
 

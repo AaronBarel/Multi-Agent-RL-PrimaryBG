@@ -222,7 +222,11 @@ def test_round_summary_is_emitted_for_every_player():
     assert len(sink.rounds) == 5
     mine = sink.rounds[0]
     assert mine.outcomes == (RegionOutcome(REG.NORTH, Placement.FIRST, 10),)
-    assert (mine.votes_gained, mine.start_region, mine.path) == (10, REG.PACIFIC_NW, (REG.PACIFIC_NW,))
+    assert (mine.votes_gained, mine.start_region, mine.path) == (
+        10,
+        REG.PACIFIC_NW,
+        (REG.PACIFIC_NW,),
+    )
 
 
 def test_finish_game_applies_tie_breakers():  # rule 20

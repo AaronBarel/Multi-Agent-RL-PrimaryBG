@@ -139,7 +139,8 @@ def _summarize(table: Table, results: dict[Region, RegionResult]) -> None:
     state, rnd = table.state, table.state.rnd
     for seat, player in enumerate(state.players):
         outcomes = tuple(
-            RegionOutcome(region, r.placements[seat], r.votes[seat]) for region, r in results.items()
+            RegionOutcome(region, r.placements[seat], r.votes[seat])
+            for region, r in results.items()
         )
         path = tuple(rnd.path[seat])
         table.sink.on_round(

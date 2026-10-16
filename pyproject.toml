@@ -46,6 +46,7 @@ addopts = "-ra"
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
+extend-exclude = ["docs"]  # design docs keep their code blocks exactly as written
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
