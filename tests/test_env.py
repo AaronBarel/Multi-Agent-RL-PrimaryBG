@@ -10,6 +10,7 @@ from primary.engine.actions import (
     DecisionType,
     GameOver,
     IllegalActionError,
+    describe_action,
     player_action,
 )
 from primary.engine.voting import TieBreak
@@ -121,3 +122,27 @@ def test_fixed_candidates_option():
     chosen = list(Candidate)[:5]
     e.reset(seed=1, options={"candidates": chosen})
     assert [p.candidate for p in e.unwrapped.game.state.players] == chosen
+
+
+def test_illegal_action_error_uses_the_observers_seat_numbering():
+    """The error must list the same actions as the agent's own action mask (relative seats)."""
+    for seed in range(50):
+        e = env()
+        e.reset(seed=seed)
+        rng = np.random.default_rng(seed)
+        for agent in e.agent_iter():
+            obs, _, termination, truncation, _ = e.last()
+            if termination or truncation:
+                break
+            mask = obs["action_mask"]
+            legal = np.flatnonzero(mask)
+            players = [a for a in legal if PLAYER_BASE <= a < PLAYER_BASE + 5]
+            if players and agent != "player_0":
+                illegal = next(a for a in range(PLAYER_BASE, PLAYER_BASE + 5) if not mask[a])
+                with pytest.raises(IllegalActionError) as info:
+                    e.step(int(illegal))
+                listed = str(info.value).split("legal actions: ")[1]
+                assert listed == ", ".join(describe_action(int(a)) for a in legal)
+                return
+            e.step(int(rng.choice(legal)))
+    pytest.fail("no player-slot decision found for a non-zero seat")

@@ -47,6 +47,13 @@ def test_refuses_to_mix_runs_unless_overwrite(tmp_path):
     assert pq.read_table(out / "games.parquet").num_rows == 3
 
 
+def test_saved_config_never_carries_overwrite(tmp_path):
+    out = tmp_path / "run"
+    run_simulation(SimConfig(num_games=1, out_dir=str(out), overwrite=True))
+    saved = SimConfig.from_yaml(out / "config.yaml")
+    assert saved.overwrite is False  # re-running the saved config must not delete this run
+
+
 def test_log_every_n_games(tmp_path):
     run_simulation(SimConfig(num_games=4, log_every=2, out_dir=str(tmp_path / "r")))
     ids = pq.read_table(tmp_path / "r" / "games.parquet").column("game_id").to_pylist()

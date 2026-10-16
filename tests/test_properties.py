@@ -15,7 +15,7 @@ def random_candidates(rng: np.random.Generator, n: int) -> list[Candidate]:
     return [Candidate(int(c)) for c in rng.choice(len(Candidate), n, replace=False)]
 
 
-@settings(max_examples=60, deadline=None)
+@settings(max_examples=2000, deadline=None)  # spec §7: thousands of seeded games
 @given(seed=st.integers(0, 2**31 - 2), num_players=st.integers(3, 6))
 def test_random_games_respect_invariants(seed, num_players):
     rng = np.random.default_rng(seed)

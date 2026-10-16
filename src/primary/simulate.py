@@ -103,7 +103,8 @@ def _prepare_out_dir(cfg: SimConfig) -> Path | None:
         for name in TABLE_NAMES:
             (out / f"{name}.parquet").unlink(missing_ok=True)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "config.yaml").write_text(yaml.safe_dump(asdict(cfg), sort_keys=False), encoding="utf-8")
+    saved = asdict(cfg) | {"overwrite": False}  # re-running a saved config must not delete this run
+    (out / "config.yaml").write_text(yaml.safe_dump(saved, sort_keys=False), encoding="utf-8")
     return out
 
 

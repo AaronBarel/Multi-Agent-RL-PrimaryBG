@@ -11,7 +11,7 @@ from pettingzoo import AECEnv
 from pettingzoo.utils import wrappers
 
 from primary.data.candidates import Candidate
-from primary.engine.actions import NUM_ACTIONS, GameOver
+from primary.engine.actions import NUM_ACTIONS, GameOver, IllegalActionError, describe_action
 from primary.engine.game import Game, Outcome
 from primary.env.encoding import encode_mask, encode_observation, obs_size, to_absolute_action
 from primary.env.rewards import shaped_rewards, terminal_rewards
@@ -91,6 +91,7 @@ class PrimaryEnv(AECEnv):
             return
         assert action is not None
         me = self._seat[agent]
+        self._check_legal(int(action), me)
         self._cumulative_rewards[agent] = 0.0
         self._clear_rewards()
         before = [p.score for p in self.game.state.players]
@@ -101,6 +102,19 @@ class PrimaryEnv(AECEnv):
                 self.rewards[self.possible_agents[seat]] += reward
         self._handle(outcome)
         self._accumulate_rewards()
+
+    def _check_legal(self, action: int, me: int) -> None:
+        """Reject illegal actions in the observer's own (seat-relative) numbering, like the mask."""
+        request = self.game.pending
+        if request is None or request.seat != me:
+            return  # the engine raises its own error
+        legal = np.flatnonzero(encode_mask(request, me, self.num_players))
+        if action not in legal:
+            listed = ", ".join(describe_action(int(a)) for a in legal)
+            raise IllegalActionError(
+                f"{describe_action(action)} is not legal for {request.decision.name}; "
+                f"legal actions: {listed}"
+            )
 
     def _handle(self, outcome: Outcome) -> None:
         if isinstance(outcome, GameOver):

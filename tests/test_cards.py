@@ -142,6 +142,13 @@ def test_calvin_may_decline():  # rule 30
     assert table.state.cubes[REG.WEST][0] == 0
 
 
+def test_calvin_with_an_empty_hand_logs_no_effect():  # rules 16, 30
+    table, sink = make_table(candidates=with_seat0(C.CALVIN_MATSUI), hands=hands(0))
+    requests, _ = drive(resolve_card(table, 0, Card.BUS), [R(REG.WEST)])
+    assert len(requests) == 1
+    assert [e.detail for e in sink.of_type(EventType.NO_EFFECT)] == ["calvin:insufficient_hand"]
+
+
 def test_calvin_with_paparazzi_stacks():  # rule 52
     table, _ = make_table(
         candidates=with_seat0(C.CALVIN_MATSUI), news=News.PAPARAZZI, hands=hands(3)

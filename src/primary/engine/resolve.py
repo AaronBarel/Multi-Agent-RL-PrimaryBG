@@ -58,6 +58,7 @@ def _optional_placement(
     player = table.state.players[seat]
     available = player.hand if source is Source.HAND else player.bank
     if available < 1:
+        table.no_effect(seat, card, f"{reason}:insufficient_{source.value}")  # rule 16
         return
     decision = (
         DecisionType.OPTIONAL_HAND_PLACEMENT
