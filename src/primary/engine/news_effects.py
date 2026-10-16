@@ -5,8 +5,10 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from types import MappingProxyType
 
+from primary.data.board import NUM_ROUNDS, Region
 from primary.data.news import News
 from primary.engine.modifiers import Modifiers, NewsMove
+from primary.engine.state import GameState
 
 ModifierFn = Callable[[Modifiers], None]
 
@@ -105,3 +107,17 @@ NEWS_MODIFIERS: Mapping[News, ModifierFn] = MappingProxyType(
         News.FREQUENT_FLYER: frequent_flyer,
     }
 )
+
+
+def move_options(kind: NewsMove, state: GameState, seat: int) -> tuple[tuple[Region, ...], bool]:
+    """Destinations offered by a News move and whether the player may decline (rules 38, 39, 44)."""
+    here = state.players[seat].pawn
+    others = [r for r in Region if r != here]
+    if kind is NewsMove.DEBATE:
+        rounds = (state.round, state.round + 1)
+        return tuple(r for r in others if state.vote_round[r] in rounds), True
+    if kind is NewsMove.LONG_TERM:
+        return tuple(r for r in others if state.vote_round[r] == NUM_ROUNDS), True
+    if kind is NewsMove.DETOUR:
+        return tuple(others), False
+    return (), True

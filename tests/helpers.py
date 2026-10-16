@@ -103,3 +103,12 @@ def drive(
     except StopIteration as stop:
         assert not pending, f"unused answers: {pending}"
         return requests, stop.value
+
+
+def play_random(game: Any, seed: int, candidates: Sequence[Candidate] = DEFAULT_CANDIDATES) -> Any:
+    """Play a whole game with uniformly random legal actions (engine RNG seeded by ``seed``)."""
+    rng = np.random.default_rng(seed + 1)
+    outcome = game.reset(seed, candidates)
+    while isinstance(outcome, DecisionRequest):
+        outcome = game.step(int(rng.choice(outcome.legal_actions)))
+    return outcome
