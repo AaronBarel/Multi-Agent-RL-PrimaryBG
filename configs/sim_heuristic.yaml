@@ -1,0 +1,8 @@
+# One heuristic bot against four random bots; the heuristic rotates through every seat.
+seed: 0
+num_games: 1000
+num_players: 5
+agents: [heuristic, random, random, random, random]
+rotate_seats: true
+log_every: 1
+out_dir: data/runs/sanity_heuristic

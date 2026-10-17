@@ -1,0 +1,8 @@
+# Five random bots. A smoke test of the engine and logging.
+seed: 0
+num_games: 1000
+num_players: 5
+agents: [random]
+rotate_seats: true
+log_every: 1
+out_dir: data/runs/sanity_random
