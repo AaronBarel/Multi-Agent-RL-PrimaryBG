@@ -70,7 +70,7 @@ def encode_observation(state: GameState, me: int, request: DecisionRequest | Non
     players = [state.players[s] for s in order]
     rnd = state.rnd
 
-    cubes = np.asarray(state.cubes, dtype=np.float32)[:, order] / TOTAL_CUBES
+    cubes = (np.asarray(state.cubes, dtype=np.float32)[:, order] / TOTAL_CUBES).astype(np.float32)
     pawns = np.zeros((NUM_REGIONS, n), dtype=np.float32)
     for k, player in enumerate(players):
         if player.pawn is not None:
@@ -90,7 +90,7 @@ def encode_observation(state: GameState, me: int, request: DecisionRequest | Non
     frozen = [state.frozen[me].get(card, 0) / CARD_COUNTS[card] for card in Card]
     skipped = [rnd.skipped_slot[s] is not None for s in order]
 
-    parts = [
+    parts: list[FloatArray] = [
         cubes.ravel(),
         pawns.ravel(),
         np.array([p.hand / TOTAL_CUBES for p in players], dtype=np.float32),
